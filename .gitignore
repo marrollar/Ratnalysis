@@ -1,6 +1,7 @@
 .idea/
-.vscode
-.ipynb_checkpoints
+.vscode/
+.ipynb_checkpoints/
 *.csv
 *.db
 *.sh
+node_modules/

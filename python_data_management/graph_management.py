@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.io as pio
 import plotly.express as px
 
-def plot_station_trend(station_name, station_id=None):
+def plot_station_trend(stations_df, sightings_df, station_name, station_id=None):
     if not station_id:
         station_id = stations_df[stations_df["station_name"] == station_name]["station_id"].values
         if len(station_id) > 1:
@@ -22,13 +22,13 @@ def plot_station_trend(station_name, station_id=None):
     
     return pio.to_html(fig, include_plotlyjs=False)
 
-def plot_summary():
+def plot_summary(sightings_df):
     nyc_total_sightings = sightings_df.groupby(["date_start", "date_end"]).sum(["so_many","one_or_two","none"]).drop(columns="station_id").reset_index()
     melted_data = nyc_total_sightings.melt(["date_start","date_end"], var_name="sighting_type", value_vars=["so_many", "one_or_two", "none"]) 
 
     fig = px.line(melted_data, x="date_end", y="value", color="sighting_type", markers=True)
     fig.update_layout(
-        title=f"30 day Trail of Total Rats Seen",
+        title="30 day Trail of Total Rats Seen",
         xaxis_tickformat='%d %B (%a)<br>%Y',
         yaxis_title="Sighting Count"
     )
