@@ -5,3 +5,4 @@
 *.db
 *.sh
 node_modules/
+.env
