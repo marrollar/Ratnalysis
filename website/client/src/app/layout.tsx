@@ -1,6 +1,11 @@
+import theme from '@/theme';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from '@/components/Navbar';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +21,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div className="flex-1 flex-col md:flex-row md:overflow-hidden justify-center items-center">
+              <div className="w-full flex-none">
+                <Navbar />
+              </div>
+              <div className="flex-grow">
+                {children}
+              </div>
+            </div>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
+      </body>
     </html>
   );
 }
