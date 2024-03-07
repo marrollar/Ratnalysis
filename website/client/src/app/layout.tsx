@@ -1,12 +1,13 @@
+import Navbar from '@/components/Navbar';
 import theme from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
+import { useLoadScript, LoadScript } from '@react-google-maps/api';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from '@/components/Navbar';
-
+import Script from 'next/script'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        {/* <Script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript" /> */}
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
