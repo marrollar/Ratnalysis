@@ -13,34 +13,64 @@ async function fetchStations() {
     }
 }
 
+async function fetchLatestRecords() {
+    try {
+        const records_resp = await fetch("http://127.0.0.1:8080/lastrecords", { method: "GET", cache: "no-store" }).then(x => x.json())
+        return records_resp
+    } catch (error) {
+        console.error("Error retrieving latest records: ", error)
+        return null
+    }
+}
+
+async function merge_station_records(stations_raw, records_dict) {
+    var stats = {}
+
+    for (var i = 0; i < stations_raw.length; i++) {
+        var id = stations_raw[i].id
+        var name = stations_raw[i].name
+        var lines_served = stations_raw[i].lines_served
+        var latitude = stations_raw[i].latitude
+        var longitude = stations_raw[i].longitude
+
+        var so_many = records_dict[id].so_many
+        var one_or_two = records_dict[id].one_or_two
+        var none = records_dict[id].none
+        var date = records_dict[id].date_end
+
+        stats[id] = {
+            id: id,
+            name: name,
+            lines_served: lines_served,
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+            so_many: parseInt(so_many),
+            one_or_two: parseInt(one_or_two),
+            none: parseInt(none),
+            last_updated: date
+        }
+    }
+
+    return stats
+}
+
 export default async function GoogleMapComponent() {
     const map_api_key = process.env.GOOGLE_MAPS_API_KEY
-    const stations_resp = await fetchStations()
 
-    // const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+    const stations_resp = await fetchStations()
+    const records_resp = await fetchLatestRecords()
+
+    var records = {}
+    for (var i = 0; i < records_resp.records.length; i++) {
+        records[records_resp.records[i].id] = records_resp.records[i]
+    }
+
+    const station_stats = await merge_station_records(stations_resp.stations, records)
 
     return (
-        // <div className="w-full h-5/6 px-2.5 flex justify-center items-center ">
-        //     <iframe
-        //         className='w-full h-full rounded-lg shadow-lg border border-gray-500'
-        //         allowFullScreen
-        //         loading="lazy"
-        //         src={`https://www.google.com/maps/embed/v1/place?key=${map_api_key}&q=Manhattan`}
-        //         >
-        //     </iframe>
-        // </div>
-        // <div className="w-full h-screen flex-1 px-2 ">
-        //     <iframe
-        //         title="Google Map"
-        //         className="w-full h-full rounded-lg "
-        //         loading="lazy"
-        //         allowFullScreen
-        //         src={`https://www.google.com/maps/embed/v1/place?key=${map_api_key}&q=Manhattan`}
-        //     />
-        // </div>
         <GoogleMapEmbed
             api_key={map_api_key}
-            stations={stations_resp.stations}
+            station_stats={station_stats}
         />
     )
 };

@@ -4,12 +4,10 @@ import React from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import CircleMarker from '@/app/geomap/CircleMarker';
 
-
-
-export default function GoogleMapEmbed({ api_key, stations }) {
+export default function GoogleMapEmbed({ api_key, station_stats }) {
     const MANHATTAN_COORD = [
-        40.7591621,
-        -74.0518023
+        40.7590322,
+        -73.99
     ]
 
     const mapStyles = {
@@ -19,42 +17,49 @@ export default function GoogleMapEmbed({ api_key, stations }) {
     const mapOptions = {
         mapTypeId: 'roadmap',
         mapTypeControl: false,
-        streetViewControl: false
+        streetViewControl: false,
+        minZoom: 10,
+        maxZoom: 20
     };
 
     return (
         <div className="w-full h-screen flex-1 px-2 ">
-            {/* <LoadScript
+            <LoadScript
                 googleMapsApiKey={api_key}
             >
                 <GoogleMap
                     mapContainerStyle={mapStyles}
-                    zoom={10}
+                    zoom={14}
                     options={mapOptions}
                     center={{
                         lat: MANHATTAN_COORD[0],
                         lng: MANHATTAN_COORD[1]
                     }}
                 >
-                    {stations.map((station, index) => (
+                    {Object.values(station_stats).map((station, index) => (
                         <CircleMarker
                             key={index}
                             center={{
-                                lat: parseFloat(station.latitude),
-                                lng: parseFloat(station.longitude)
+                                lat: station.latitude,
+                                lng: station.longitude,
                             }}
-                            radius={1}
+                            radius={station.so_many + station.one_or_two}
+                            s_id={station.id}
+                            s_name={station.name}
+                            s_somany={station.so_many}
+                            s_oneortwo={station.one_or_two}
+                            s_none={station.none}
                         />
                     ))}
                 </GoogleMap>
-            </LoadScript> */}
-            <iframe
+            </LoadScript>
+            {/* <iframe
                 title="Google Map"
                 className="w-full h-full rounded-lg "
                 loading="lazy"
                 allowFullScreen
                 src={`https://www.google.com/maps/embed/v1/place?key=${api_key}&q=Manhattan`}
-            />
+            /> */}
         </div>
     )
 }
