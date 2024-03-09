@@ -36,7 +36,7 @@ export default function GoogleMapEmbed({ api_key, stations }) {
                         lng: MANHATTAN_COORD[1]
                     }}
                 >
-                    {stations.stations.map((station, index) => (
+                    {stations.map((station, index) => (
                         <CircleMarker
                             key={index}
                             center={{

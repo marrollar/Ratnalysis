@@ -18,6 +18,18 @@ func NewHttpServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		encodeResponse,
 	))
 
+	r.Methods("GET").Path("/lastrecord/{id}").Handler(httptransport.NewServer(
+		endpoints.GetLastRecord,
+		decodeGetLastRecordRequest,
+		encodeResponse,
+	))
+
+	r.Methods("GET").Path("/lastrecords").Handler(httptransport.NewServer(
+		endpoints.GetLastRecords,
+		httptransport.NopRequestDecoder,
+		encodeResponse,
+	))
+
 	return r
 }
 

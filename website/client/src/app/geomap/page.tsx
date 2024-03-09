@@ -5,8 +5,8 @@ import GoogleMapEmbed from '@/components/GoogleMapsEmbed';
 
 async function fetchStations() {
     try {
-        const stations_req = await fetch("http://127.0.0.1:8080/stations", { method: "GET", cache: "no-store" }).then(x => x.json())
-        return stations_req
+        const stations_resp = await fetch("http://127.0.0.1:8080/stations", { method: "GET", cache: "no-store" }).then(x => x.json())
+        return stations_resp
     } catch (error) {
         console.error("Error retrieving stations: ", error)
         return null
@@ -15,7 +15,7 @@ async function fetchStations() {
 
 export default async function GoogleMapComponent() {
     const map_api_key = process.env.GOOGLE_MAPS_API_KEY
-    const stations = await fetchStations()
+    const stations_resp = await fetchStations()
 
     // const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
 
@@ -40,7 +40,7 @@ export default async function GoogleMapComponent() {
         // </div>
         <GoogleMapEmbed
             api_key={map_api_key}
-            stations={stations}
+            stations={stations_resp.stations}
         />
     )
 };
