@@ -9,6 +9,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script'
 const inter = Inter({ subsets: ["latin"] });
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,17 +24,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* <Script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript" /> */}
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <div className="flex-1 flex-col md:flex-row md:overflow-hidden justify-center items-center">
-              <div className="w-full flex-none">
+            <div className="flex flex-col min-h-screen">
+              <header>
                 <Navbar />
-              </div>
-              <div className="flex-grow">
+              </header>
+              <main className="flex grow [max-height:92lvh]">
                 {children}
-              </div>
+              </main>
+              <footer>
+                <Footer />
+              </footer>
             </div>
           </ThemeProvider>
         </AppRouterCacheProvider>

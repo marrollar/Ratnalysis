@@ -23,8 +23,8 @@ export default function GoogleMapEmbed({ api_key, station_stats }) {
     };
 
     return (
-        <div className="w-full h-screen flex-1 px-2 ">
-            <LoadScript
+        <>
+            {/* <LoadScript
                 googleMapsApiKey={api_key}
             >
                 <GoogleMap
@@ -52,14 +52,14 @@ export default function GoogleMapEmbed({ api_key, station_stats }) {
                         />
                     ))}
                 </GoogleMap>
-            </LoadScript>
-            {/* <iframe
+            </LoadScript> */}
+            <iframe
+                className='w-full'
                 title="Google Map"
-                className="w-full h-full rounded-lg "
                 loading="lazy"
                 allowFullScreen
                 src={`https://www.google.com/maps/embed/v1/place?key=${api_key}&q=Manhattan`}
-            /> */}
-        </div>
+            />
+        </>
     )
 }

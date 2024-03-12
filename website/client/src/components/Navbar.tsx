@@ -8,8 +8,8 @@ const Navbar = () => {
     const pathname = usePathname();
 
     return (
-        <div className='p-2'>
-            <nav className="w-full bg-gray-800 p-2 rounded-md border border-gray-500 ">
+        <div className='flex w-full'>
+            <nav className="w-full bg-gray-800 p-2 border border-gray-500 ">
                 <div className="container mx-auto">
                     <ul className="flex justify-center items-center space-x-4 pt-0.5">
                         <li>
