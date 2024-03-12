@@ -1,10 +1,10 @@
 'use client'
 import React, { useRef, useState, useEffect } from 'react';
 
-export default function ChartsSideBar({ station_list }) {
+export default function ChartsSideBar({ station_list, handleAddNewChart }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredStations, setFilteredStations] = useState(station_list);
-    
+
     useEffect(() => {
         const filtered = station_list.filter(station =>
             station.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -13,9 +13,17 @@ export default function ChartsSideBar({ station_list }) {
         setFilteredStations(filtered);
     }, [searchTerm, station_list]);
 
-    const handleSearchChange = event => {
+    const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
+
+    const handleButtonClick = (event) => {
+        const retData = {
+            "id":event.currentTarget.id,
+            "render":true
+        }
+        handleAddNewChart(retData)
+    }
 
     return (
         <>
@@ -29,10 +37,12 @@ export default function ChartsSideBar({ station_list }) {
                         placeholder="Search stations"
                         className="w-full bg-gray-700 text-white rounded-md py-2 px-3 mb-4"
                     />
-                    <div className='h-full flex-grow bg-gray-900 overflow-y-auto '>
+                    <div className='h-full flex-grow bg-gray-900 overflow-y-auto p-3'>
                         <ul className='h-full flex-grow overflow-auto'>
                             {filteredStations.map((station, index) => (
-                                <li key={index} className="cursor-pointer hover:bg-gray-700 rounded-md py-2 px-4 mb-2">
+                                <li key={index} id={station.id} onClick={handleButtonClick}
+                                    className="cursor-pointer hover:bg-gray-700 rounded-md py-2 px-4 mb-2"
+                                >
                                     <div>({station.id})</div>
                                     <div>{station.name}</div>
                                 </li>

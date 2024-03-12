@@ -1,4 +1,4 @@
-import ChartsSideBar from "@/components/ChartsSideBar";
+import ChartsPage from "@/components/ChartsPage";
 
 async function fetchStations() {
     try {
@@ -14,8 +14,6 @@ export default async function Page() {
     const stations_resp = await fetchStations()
 
     return (
-        <ChartsSideBar
-            station_list={stations_resp.stations}
-        />
+        <ChartsPage stations={stations_resp.stations} />
     )
 }
