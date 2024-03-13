@@ -6,12 +6,15 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import sqlite3
 
+pd.options.mode.chained_assignment = None
+
 con = sqlite3.connect("rat_data.db")
-con.execute("PRAGMA foreign_keys=1")
 cur = con.cursor()
 
 sightings_df = pd.read_sql("SELECT * from sightings", con)
 stations_df = pd.read_sql("SELECT * from stations", con)
+sightings_df["date_start"] = pd.to_datetime(sightings_df["date_start"])
+sightings_df["date_end"] = pd.to_datetime(sightings_df["date_end"])
 
 
 def plot_station_detailed(station_name=None, station_id=None):
@@ -48,7 +51,7 @@ def plot_station_detailed(station_name=None, station_id=None):
         yaxis_title="Sighting Count",
     )
 
-    return pio.to_html(fig, include_plotlyjs=False)
+    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
 def plot_summary():
@@ -77,7 +80,7 @@ def plot_summary():
         yaxis_title="Sighting Count",
     )
 
-    return pio.to_html(fig, include_plotlyjs=False)
+    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
 def plot_station_summary(station_name=None, station_id=None):
@@ -198,7 +201,6 @@ def plot_station_summary(station_name=None, station_id=None):
         ),
     )
 
-    return pio.to_html(fig, include_plotlyjs=False)
+    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
-# def get_station_historical_totals()
