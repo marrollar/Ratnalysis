@@ -1,4 +1,4 @@
-package ratservice
+package plotlyservice
 
 import (
 	"context"
@@ -12,21 +12,9 @@ func NewHttpServer(ctx context.Context, endpoints Endpoints) http.Handler {
 	r := mux.NewRouter()
 	r.Use(commonMiddleware)
 
-	r.Methods("GET").Path("/rs/stations").Handler(httptransport.NewServer(
-		endpoints.GetStations,
-		httptransport.NopRequestDecoder,
-		encodeResponse,
-	))
-
-	r.Methods("GET").Path("/rs/lastrecord/{id}").Handler(httptransport.NewServer(
-		endpoints.GetLastRecord,
-		decodeGetLastRecordRequest,
-		encodeResponse,
-	))
-
-	r.Methods("GET").Path("/rs/lastrecords").Handler(httptransport.NewServer(
-		endpoints.GetLastRecords,
-		httptransport.NopRequestDecoder,
+	r.Methods("GET").Path("/ps/graphs/{id}").Handler(httptransport.NewServer(
+		endpoints.GetStationSummary,
+		decodeGetStationSummaryRequest,
 		encodeResponse,
 	))
 
