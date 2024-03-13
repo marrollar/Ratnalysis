@@ -1,57 +1,24 @@
+import sqlite3
+import sys
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 from plotly.subplots import make_subplots
-import sqlite3
+import os
 
 pd.options.mode.chained_assignment = None
 
-con = sqlite3.connect("rat_data.db")
+this_dir = os.path.abspath(sys.argv[0] + "/..")
+con = sqlite3.connect(os.path.join(this_dir, "rat_data.db"))
 cur = con.cursor()
 
 sightings_df = pd.read_sql("SELECT * from sightings", con)
 stations_df = pd.read_sql("SELECT * from stations", con)
 sightings_df["date_start"] = pd.to_datetime(sightings_df["date_start"])
 sightings_df["date_end"] = pd.to_datetime(sightings_df["date_end"])
-
-
-def plot_station_detailed(station_name=None, station_id=None):
-    if not station_name and not station_id:
-        print("At least the station name or station id must be given")
-        return
-
-    # Check if we have multiple stations with the same name being queried
-    if not station_id:
-        station_id = stations_df[stations_df["station_name"] == station_name][
-            "station_id"
-        ].values
-        if len(station_id) > 1:
-            print(
-                "Station name conflict, this station requires a specific ID due to duplicate names"
-            )
-            return
-
-    # Retrieve station in question and organize columns of interest
-    station_data = sightings_df[sightings_df["station_id"] == station_id[0]]
-    melted_data = station_data.melt(
-        ["station_id", "date_start", "date_end"],
-        var_name="sighting_type",
-        value_vars=["so_many", "one_or_two", "none"],
-    )
-
-    # Draw graph
-    fig = px.line(
-        melted_data, x="date_end", y="value", color="sighting_type", markers=True
-    )
-    fig.update_layout(
-        title=f"30 Day Trail of Rats Seen at {station_name} ({station_id[0]})",
-        xaxis_tickformat="%d %B (%a)<br>%Y",
-        yaxis_title="Sighting Count",
-    )
-
-    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
 def plot_summary():
@@ -83,22 +50,57 @@ def plot_summary():
     return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
-def plot_station_summary(station_name=None, station_id=None):
+def plot_station_detailed(station_name=None, station_id=None):
     if not station_name and not station_id:
-        print("At least the station name or station id must be given")
-        return
+        raise ValueError("At least the station name or station id must be given")
+
+    # Check if we have multiple stations with the same name being queried
+    if not station_id:
+        station_id = stations_df[stations_df["station_name"] == station_name][
+            "station_id"
+        ].values
+        if len(station_id) > 1:
+            raise ValueError(
+                "Station name conflict, this station requires a specific ID due to duplicate names"
+            )
+        station_id = station_id[0]
+
+    # Retrieve station in question and organize columns of interest
+    station_data = sightings_df[sightings_df["station_id"] == station_id]
+    melted_data = station_data.melt(
+        ["station_id", "date_start", "date_end"],
+        var_name="sighting_type",
+        value_vars=["so_many", "one_or_two", "none"],
+    )
+
+    # Draw graph
+    fig = px.line(
+        melted_data, x="date_end", y="value", color="sighting_type", markers=True
+    )
+    fig.update_layout(
+        title=f"30 Day Trail of Rats Seen at {station_name} ({station_id})",
+        xaxis_tickformat="%d %B (%a)<br>%Y",
+        yaxis_title="Sighting Count",
+    )
+
+    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
+
+
+def plot_station_summary(station_name=None, station_id=None):
+    if (not station_name or station_name == "None") and not station_id:
+        raise ValueError("At least the station name or station id must be given")
 
     if not station_id:
         station_id = stations_df[stations_df["station_name"] == station_name][
             "station_id"
         ].values
         if len(station_id) > 1:
-            print(
+            raise ValueError(
                 "Station name conflict, this station requires a specific ID due to duplicate names"
             )
-            return
+        station_id = station_id[0]
 
-    station_data = sightings_df[sightings_df["station_id"] == station_id[0]]
+    station_data = sightings_df[sightings_df["station_id"] == station_id]
     station_data["total_sightings"] = (
         station_data["so_many"] + station_data["one_or_two"]
     )
@@ -204,3 +206,13 @@ def plot_station_summary(station_name=None, station_id=None):
     return pio.to_html(fig, include_plotlyjs=False, full_html=False)
 
 
+if __name__ == "__main__":
+    args = sys.argv
+
+    if args[1] == "plot_summary":
+        print(plot_summary())
+    elif args[1] in ["plot_station_detailed", "plot_station_summary"]:
+        if len(args) == 3 and args[2].isnumeric():
+            print(globals()[args[1]](station_id=int(args[2])))
+        else:
+            print(globals()[args[1]](station_name=args[2]))
