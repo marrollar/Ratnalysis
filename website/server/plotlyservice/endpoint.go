@@ -19,10 +19,10 @@ func MakeEndpoints(s Service) Endpoints {
 func makeGetStationSummaryEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(GetStationSummaryRequest)
-		html, err := s.GetStationSummary(ctx, req.ID)
+		pjson, err := s.GetStationSummary(ctx, req.ID)
 
 		return GetStationSummaryResponse{
-			HTML: html,
+			PJSON: pjson,
 		}, err
 	}
 }

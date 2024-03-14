@@ -13,7 +13,7 @@ type (
 		ID string `json:"id"`
 	}
 	GetStationSummaryResponse struct {
-		HTML string `json:"html"`
+		PJSON string `json:"pjson"`
 	}
 )
 

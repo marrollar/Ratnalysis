@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import sys
 
@@ -7,7 +8,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 from plotly.subplots import make_subplots
-import os
 
 pd.options.mode.chained_assignment = None
 
@@ -47,7 +47,7 @@ def plot_summary():
         yaxis_title="Sighting Count",
     )
 
-    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
+    return pio.to_json(fig, pretty=True)
 
 
 def plot_station_detailed(station_name=None, station_id=None):
@@ -77,13 +77,19 @@ def plot_station_detailed(station_name=None, station_id=None):
     fig = px.line(
         melted_data, x="date_end", y="value", color="sighting_type", markers=True
     )
+
+    if not station_name:
+        station_name = stations_df[
+            stations_df["station_id"] == station_id
+        ].station_name.values[0]
+
     fig.update_layout(
         title=f"30 Day Trail of Rats Seen at {station_name} ({station_id})",
         xaxis_tickformat="%d %B (%a)<br>%Y",
         yaxis_title="Sighting Count",
     )
 
-    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
+    return pio.to_json(fig, pretty=True)
 
 
 def plot_station_summary(station_name=None, station_id=None):
@@ -187,9 +193,13 @@ def plot_station_summary(station_name=None, station_id=None):
 
     # fig.update_xaxes(title_text="Date End")
     # fig.update_yaxes(title_text="Count")
+    if not station_name:
+        station_name = stations_df[
+            stations_df["station_id"] == station_id
+        ].station_name.values[0]
 
     fig.update_layout(
-        title_text=f"30 Day Trail of Rat Sightings - {station_name}",
+        title=dict(text=f"30 Day Trail of Rat Sightings - {station_name}"),
         yaxis=dict(
             title=dict(text="Count"),
             side="left",
@@ -201,9 +211,10 @@ def plot_station_summary(station_name=None, station_id=None):
             overlaying="y",
             tickmode="sync",
         ),
+        margin={'t':100,'l':0,'b':0,'r':0}
     )
 
-    return pio.to_html(fig, include_plotlyjs=False, full_html=False)
+    return pio.to_json(fig, pretty=True)
 
 
 if __name__ == "__main__":
