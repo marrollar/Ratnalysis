@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import ChartsSideBar from "./ChartsSideBar"
-import ChartsWorkspace from "./ChartsWorkspace"
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import ChartsSideBar from "./ChartsSideBar";
+import ChartsWorkspace from "./ChartsWorkspace";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 
@@ -22,6 +22,12 @@ function sessionLoad(key) {
     return data !== null ? JSON.parse(data) : {}
 }
 
+// const initialNodes = [
+//     { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
+//     { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
+// ];
+// const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+
 export default function ChartsPage({ stations }) {
     const [charts, setCharts] = useState(() => sessionLoad("charts"))
 
@@ -36,7 +42,6 @@ export default function ChartsPage({ stations }) {
         }))
     }
 
-
     const handleDeleteChart = (id) => {
         setCharts(prevCharts => {
             const newCharts = { ...prevCharts }
@@ -49,15 +54,23 @@ export default function ChartsPage({ stations }) {
         sessionStorage.setItem("charts", JSON.stringify(charts))
     }, [charts])
 
+    useEffect(() => {
+        sessionLoad("charts")
+    }, []);
+
     return (
         <>
             <ChartsSideBar
                 station_list={stations}
                 handleAddNewChart={handleAddNewChart}
             />
-            <ChartsWorkspace>
+            <ChartsWorkspace
+                // in_nodes={initialNodes}
+                // in_edges={initialEdges}
+            >
 
             </ChartsWorkspace>
+
         </>
     )
 }
