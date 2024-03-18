@@ -1,16 +1,22 @@
+import dynamic from "next/dynamic";
 import { memo } from 'react';
-import { Handle, Position, NodeResizer } from 'reactflow';
+import { NodeResizer } from 'reactflow';
+
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 
 function ChartNode({ data, selected }) {
+    console.log(data)
     return (
         <>
             <NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} />
-            <Handle type="target" position={Position.Left} />
-            <div style={{ padding: 10 }}>
-                {data.label}
-            </div>
-            <Handle type="source" position={Position.Right} />
+            <Plot
+                data={data.pjson.data}
+                layout={data.pjson.layout}
+                frames={data.pjson.frames}
+                config={data.pjson.config}
+                useResizeHandler={true}
+            />
         </>
     )
 }

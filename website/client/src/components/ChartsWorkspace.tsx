@@ -9,26 +9,23 @@ import ReactFlow, {
     useNodesState,
 } from 'reactflow';
 
+import ChartNode from './ChartNode';
+const nodeTypes = {
+    ChartNode
+}
+
 import 'reactflow/dist/style.css';
 
-export default function ChartsWorkspace({ in_nodes, in_edges }) {
+export default function ChartsWorkspace({ in_nodes }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(in_nodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(in_edges);
-
-    const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
-        [setEdges],
-    );
 
     return (
         <div className="grow pt-4 pr-4 pb-4">
             <div className="h-full flex-grow bg-gray-900 border border-gray-500 ">
                 <ReactFlow
                     nodes={nodes}
-                    edges={edges}
+                    nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
                 >
                     <Controls />
                     <MiniMap />
