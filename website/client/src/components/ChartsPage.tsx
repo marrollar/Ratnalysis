@@ -17,16 +17,15 @@ async function fetchGraph(station_id) {
     }
 }
 
+function sessionLoad(key) {
+    const data = sessionStorage.getItem(key)
+    return data !== null ? JSON.parse(data) : {}
+}
+
 export default function ChartsPage({ stations }) {
-    const [charts, setCharts] = useState({})
-    // const [graphHTMLS, setGraphHTMLS] = useState({})
+    const [charts, setCharts] = useState(() => sessionLoad("charts"))
 
     const handleAddNewChart = async (station_info) => {
-        // setCharts(prevCharts => ({
-        //     ...prevCharts,
-        //     [station_info.id]: station_info
-        // }))
-
         const chart_resp = await fetchGraph(station_info.id)
         setCharts(prevCharts => ({
             ...prevCharts,
@@ -37,6 +36,7 @@ export default function ChartsPage({ stations }) {
         }))
     }
 
+
     const handleDeleteChart = (id) => {
         setCharts(prevCharts => {
             const newCharts = { ...prevCharts }
@@ -45,9 +45,9 @@ export default function ChartsPage({ stations }) {
         })
     }
 
-    // Object.entries(charts).map(([s_id, chart_info]) => (
-    //     console.log(chart_info.pjson.layout)
-    // ))
+    useEffect(() => {
+        sessionStorage.setItem("charts", JSON.stringify(charts))
+    }, [charts])
 
     return (
         <>
@@ -56,18 +56,7 @@ export default function ChartsPage({ stations }) {
                 handleAddNewChart={handleAddNewChart}
             />
             <ChartsWorkspace>
-                {Object.entries(charts).map(([s_id, chart_info]) => (
-                    <div key={s_id} className="p-2 w-full">
-                        <Plot
-                            data={chart_info.pjson.data}
-                            layout={chart_info.pjson.layout}
-                            frames={chart_info.pjson.frames}
-                            config={chart_info.pjson.config}
-                            useResizeHandler={true}
-                            style={{width:"100%", height:"300px"}}
-                        />
-                    </div>
-                ))}
+
             </ChartsWorkspace>
         </>
     )
