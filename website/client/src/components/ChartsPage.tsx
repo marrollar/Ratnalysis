@@ -69,10 +69,7 @@ export default function ChartsPage({ stations }) {
             />
             <ChartsWorkspace
                 in_nodes={charts}
-            >
-
-            </ChartsWorkspace>
-
+            />
         </>
     )
 }
