@@ -22,10 +22,10 @@ function ChartsWorkspaceFlow({ in_nodes }) {
     const [rfInstance, setRFInstance] = useState(null)
     const { setViewport } = useReactFlow();
 
+    // Load session on component render
     useEffect(() => {
         const saved_rf = JSON.parse(sessionStorage.getItem("rf"))
         if (saved_rf) {
-            console.log(saved_rf)
             const { x = 0, y = 0, zoom = 1 } = saved_rf.viewport;
             setNodes(saved_rf.nodes || []);
             setViewport({ x, y, zoom });
@@ -34,9 +34,13 @@ function ChartsWorkspaceFlow({ in_nodes }) {
     }, [setNodes, setViewport])
 
     useEffect(() => {
-        setNodes(in_nodes)
+        const newNodes = in_nodes.filter(newItem => !nodes.some(item => item.id === newItem.id))
+        console.log(newNodes)
+
+        setNodes(prev_nodes => [...prev_nodes, ...newNodes])
     }, [in_nodes, setNodes])
 
+    // Saves flow to session when any node is modified, whether position or otherwise
     useEffect(() => {
         if (rfInstance) {
             const flow = rfInstance.toObject()
@@ -44,6 +48,7 @@ function ChartsWorkspaceFlow({ in_nodes }) {
         }
     }, [nodes, rfInstance])
 
+    // Saves flow to session whenever viewport is changed
     useOnViewportChange({
         onChange: (viewport) => {
             if (rfInstance) {
