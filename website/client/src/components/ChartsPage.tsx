@@ -37,7 +37,8 @@ export default function ChartsPage({ stations }) {
                     id: station_info.id,
                     type: "ChartNode",
                     data: {
-                        pjson: plotly_json
+                        pjson: plotly_json,
+                        delHandler: handleDeleteChart
                     },
                     position: { x: 100, y: 100 }
                 }
@@ -46,10 +47,13 @@ export default function ChartsPage({ stations }) {
     }, [])
 
     const handleDeleteChart = (id) => {
+        console.log(id)
         setCharts(prevCharts => {
-            const newCharts = { ...prevCharts }
-            delete newCharts[id]
-            return newCharts
+            const newCharts = [...prevCharts]
+            // delete newCharts[id]
+            // return newCharts
+            const remaining_nodes = newCharts.filter(item => item.id !== id)
+            return remaining_nodes
         })
     }
 

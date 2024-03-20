@@ -33,10 +33,9 @@ function ChartsWorkspaceFlow({ in_nodes }) {
 
     }, [setNodes, setViewport])
 
+    // Update nodes state from input array whenever a new input array is received
     useEffect(() => {
         const newNodes = in_nodes.filter(newItem => !nodes.some(item => item.id === newItem.id))
-        console.log(newNodes)
-
         setNodes(prev_nodes => [...prev_nodes, ...newNodes])
     }, [in_nodes, setNodes])
 
