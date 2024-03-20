@@ -30,6 +30,7 @@ const reactFlowStore = createWithEqualityFn(
                             id: id,
                             type: "ChartNode",
                             data: {
+                                id: id,
                                 pjson: data
                             },
                             position: { x: 100, y: 100 }
@@ -38,11 +39,7 @@ const reactFlowStore = createWithEqualityFn(
                 })
             },
             deleteNode: (id) => {
-                set((prevNodes) => {
-                    const nodes_copy = [...prevNodes]
-                    const remaining_nodes = nodes_copy.filter(item => item.id !== id)
-                    return remaining_nodes
-                })
+                set((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }))
             }
         }),
         {
