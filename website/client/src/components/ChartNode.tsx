@@ -6,7 +6,6 @@ const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 
 function ChartNode({ data, selected }) {
-    console.log(data.delHandler)
     return (
         <div className="flex flex-grow">
             {/* <NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} /> */}

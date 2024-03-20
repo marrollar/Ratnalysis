@@ -1,7 +1,23 @@
 'use client'
-import React, { useRef, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { shallow } from "zustand/shallow";
+import reactFlowStore from "./reactFlowStore";
 
-export default function ChartsSideBar({ station_list, handleAddNewChart }) {
+async function fetchGraph(station_id) {
+    try {
+        const graph_resp = await fetch(`http://127.0.0.1:8080/ps/graphs/${station_id}`, { method: "GET" }).then(x => x.json())
+        return graph_resp
+    } catch (error) {
+        console.error("Error retrieving graph: ", error)
+        return null
+    }
+}
+
+export default function ChartsSideBar({ station_list }) {
+    const { appendNode } = reactFlowStore((state) => ({
+        appendNode: state.appendNode
+    }), shallow)
+
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredStations, setFilteredStations] = useState(station_list);
 
@@ -17,13 +33,13 @@ export default function ChartsSideBar({ station_list, handleAddNewChart }) {
         setSearchTerm(event.target.value);
     };
 
-    const handleButtonClick = (event) => {
-        const retData = {
-            "id":event.currentTarget.id,
-            "render":true
-        }
-        handleAddNewChart(retData)
-    }
+    const handleButtonClick = useCallback(async (event) => {
+        const s_id = event.currentTarget.id
+        const chart_resp = await fetchGraph(s_id)
+        const plotly_json = JSON.parse(chart_resp.pjson)
+
+        appendNode(s_id, plotly_json)
+    }, [appendNode])
 
     return (
         <>
