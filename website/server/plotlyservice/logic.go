@@ -39,3 +39,23 @@ func (s service) GetStationSummary(ctx context.Context, station_id string) (stri
 
 	return string(out[:]), nil
 }
+
+func (s service) GetTotalSummary(ctx context.Context) (string, error) {
+	logger := log.With(s.logger, "method", "GetTotalSummary")
+
+	cmd := exec.Command(
+		"python",
+		"graphs.py",
+		"plot_summary",
+	)
+	cmd.Dir = s.py_dir
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		level.Error(logger).Log("err", err)
+		return string(out[:]), err
+	}
+	logger.Log("status", "ok")
+
+	return string(out[:]), nil
+}

@@ -17,6 +17,12 @@ func NewHttpServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		decodeGetStationSummaryRequest,
 		encodeResponse,
 	))
+	
+	r.Methods("GET").Path("/ps/summary").Handler(httptransport.NewServer(
+		endpoints.GetTotalSummary,
+		httptransport.NopRequestDecoder,
+		encodeResponse,
+	))
 
 	return r
 }
