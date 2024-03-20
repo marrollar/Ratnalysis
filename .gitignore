@@ -6,3 +6,4 @@
 *.sh
 node_modules/
 .env
+.mypy.ini
