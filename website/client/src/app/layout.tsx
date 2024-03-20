@@ -1,15 +1,13 @@
+import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import theme from '@/theme';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { useLoadScript, LoadScript } from '@react-google-maps/api';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Script from 'next/script'
 const inter = Inter({ subsets: ["latin"] });
-import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: "NYC MTA Rat Stats",
