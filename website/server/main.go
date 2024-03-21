@@ -17,23 +17,26 @@ import (
 	_ "modernc.org/sqlite"
 
 	"net/http"
-	"path/filepath"
 )
 
 func main() {
-	DB_FILE, err := filepath.Abs("../../pydata/rat_data.db")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
+	// DB_FILE, err := filepath.Abs("../../pydata/rat_data.db")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	os.Exit(-1)
+	// }
 
-	PY_DIR, err := filepath.Abs("../../pydata/")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
+	// PY_DIR, err := filepath.Abs("../../pydata/")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	os.Exit(-1)
+	// }
 
-	var httpaddr = flag.String("http", ":8080", "Golang server addr")
+	DB_FILE := os.Getenv("DB_FILE")
+	PY_DIR := os.Getenv("PY_DIR")
+	PORT := os.Getenv("PORT")
+
+	var httpaddr = flag.String("http", PORT, "Golang server addr")
 	var logger_ratservice log.Logger
 	var logger_plotlyservice log.Logger
 	{
