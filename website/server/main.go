@@ -36,7 +36,7 @@ func main() {
 	PY_DIR := os.Getenv("PY_DIR")
 	PORT := os.Getenv("PORT")
 
-	var httpaddr = flag.String("http", PORT, "Golang server addr")
+	var httpaddr = flag.String("http", ":" + PORT, "Golang server addr")
 	var logger_ratservice log.Logger
 	var logger_plotlyservice log.Logger
 	{

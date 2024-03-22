@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  server:
+    image: ratapi:latest
+    build:
+      dockerfile: ./Dockerfile_server
+    container_name: rat_server
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_FILE=/pydata/rat_data.db
+      - PY_DIR=/pydata
+      - PORT=8080
+    working_dir: /app
+    command: /app/ratapi
+  # client:
+  #   image: ratweb:latest
+  #   container_name: rat_client
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./website/client:/client
+  #   working_dir: /client
+  #   command: npm run start
