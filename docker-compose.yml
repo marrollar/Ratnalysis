@@ -14,12 +14,22 @@ services:
       - PORT=8080
     working_dir: /app
     command: /app/ratapi
-  # client:
-  #   image: ratweb:latest
-  #   container_name: rat_client
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./website/client:/client
-  #   working_dir: /client
-  #   command: npm run start
+    networks:
+      - ratnet
+
+  client:
+    image: ratweb:latest
+    build:
+      dockerfile: ./Dockerfile_client
+    depends_on:
+      - server
+    container_name: rat_client
+    ports:
+      - "3000:3000"
+    working_dir: /client
+    command: npm run start
+    networks:
+      - ratnet
+
+networks:
+  ratnet:

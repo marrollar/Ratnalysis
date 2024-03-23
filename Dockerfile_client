@@ -1,0 +1,5 @@
+FROM node:lts-alpine3.19
+WORKDIR /client
+COPY ./website/client /client
+
+RUN npx next telemetry disable && npm run build
