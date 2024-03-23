@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react';
 import { shallow } from "zustand/shallow";
-import reactFlowStore from "./reactFlowStore";
+import reactFlowStore, { ReactFlowStore } from "./reactFlowStore";
 
 async function fetchGraph(station_id) {
     try {
@@ -14,7 +14,7 @@ async function fetchGraph(station_id) {
 }
 
 export default function ChartsSideBar({ station_list }) {
-    const { appendNode } = reactFlowStore((state) => ({
+    const { appendNode } = reactFlowStore((state: ReactFlowStore) => ({
         appendNode: state.appendNode
     }), shallow)
 

@@ -1,12 +1,40 @@
 import {
+    Node,
     NodeChange,
+    ReactFlowInstance,
+    Viewport,
     applyNodeChanges
 } from 'reactflow';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { createWithEqualityFn } from 'zustand/traditional';
 
+export interface ChartData {
+    id: string,
+    type: string,
+    data: {
+        id: number,
+        pjson: {}
+    },
+    position: {
+        x: number,
+        y: number
+    }
+}
+
+// TODO: Make the data array in appendNode more precisely typed
+export interface ReactFlowStore {
+    nodes: Node[],
+    rfInstance: ReactFlowInstance,
+    viewport: { x: number, y: number, zoom: number },
+    onNodesChange: (changes: NodeChange[]) => void,
+    setRFInstance: (rf: ReactFlowInstance) => void,
+    setVP: (vp: Viewport) => void,
+    appendNode: (id: string, data: []) => void
+    deleteNode: (id: string) => void
+}
+
 const reactFlowStore = createWithEqualityFn(
-    persist(
+    persist<ReactFlowStore>(
         (set, get) => ({
             nodes: [],
             rfInstance: null,
@@ -16,13 +44,13 @@ const reactFlowStore = createWithEqualityFn(
                     nodes: applyNodeChanges(changes, get().nodes),
                 });
             },
-            setRFInstance: (rf) => {
+            setRFInstance: (rf: ReactFlowInstance) => {
                 set({ rfInstance: rf })
             },
-            setVP: (vp) => {
+            setVP: (vp: Viewport) => {
                 set({ viewport: vp })
             },
-            appendNode: (id, data) => {
+            appendNode: (id: string, data: []) => {
                 set({
                     nodes: [
                         ...get().nodes,
@@ -38,7 +66,7 @@ const reactFlowStore = createWithEqualityFn(
                     ]
                 })
             },
-            deleteNode: (id) => {
+            deleteNode: (id: string) => {
                 set((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }))
             }
         }),

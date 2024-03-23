@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import ReactFlow, {
     Background,
+    BackgroundVariant,
     Controls,
     MiniMap,
     ReactFlowProvider,
@@ -16,10 +17,10 @@ const nodeTypes = {
 }
 
 import 'reactflow/dist/style.css';
-import reactFlowStore from './reactFlowStore';
+import reactFlowStore, { ReactFlowStore } from './reactFlowStore';
 
 function ChartsWorkspaceFlow() {
-    const { nodes, rfInstance, viewport, setVP, onNodesChange, setRFInstance } = reactFlowStore((state) => ({
+    const { nodes, rfInstance, viewport, setVP, onNodesChange, setRFInstance } = reactFlowStore((state: ReactFlowStore) => ({
         nodes: state.nodes,
         rfInstance: state.rfInstance,
         viewport: state.viewport,
@@ -53,7 +54,7 @@ function ChartsWorkspaceFlow() {
                 >
                     <Controls />
                     <MiniMap />
-                    <Background variant="dots" gap={12} size={1} />
+                    <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
                 </ReactFlow>
             </div>
         </div>

@@ -1,13 +1,13 @@
 import dynamic from "next/dynamic";
 import { memo } from 'react';
 import { NodeResizer } from 'reactflow';
-import reactFlowStore from "./reactFlowStore";
+import reactFlowStore, { ReactFlowStore } from "./reactFlowStore";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 
 function ChartNode({ data, selected }) {
-    const { deleteNode } = reactFlowStore((state) => ({
+    const { deleteNode } = reactFlowStore((state: ReactFlowStore) => ({
         deleteNode: state.deleteNode
     }))
 
