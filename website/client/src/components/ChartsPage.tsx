@@ -1,9 +1,14 @@
 "use client"
 
+import { FetchStationJson } from "@/app/lib/server";
 import ChartsSideBar from "./ChartsSideBar";
 import ChartsWorkspace from "./ChartsWorkspace";
 
-export default function ChartsPage({ stations }) {
+interface ChartsPageProps {
+    stations: [FetchStationJson]
+}
+
+export default function ChartsPage({ stations }: ChartsPageProps) {
     return (
         <>
             <ChartsSideBar station_list={stations} />

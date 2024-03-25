@@ -1,9 +1,11 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react';
+import { FetchStationJson } from '@/app/lib/server';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { shallow } from "zustand/shallow";
 import reactFlowStore, { ReactFlowStore } from "./reactFlowStore";
+import { ButtonClickEvent } from 'plotly.js';
 
-async function fetchGraph(station_id) {
+async function fetchGraph(station_id: string) {
     try {
         const graph_resp = await fetch(`http://127.0.0.1:8080/ps/graphs/${station_id}`, { method: "GET" }).then(x => x.json())
         return graph_resp
@@ -13,13 +15,17 @@ async function fetchGraph(station_id) {
     }
 }
 
-export default function ChartsSideBar({ station_list }) {
+interface ChartsSideBarProps {
+    station_list: [FetchStationJson]
+}
+
+export default function ChartsSideBar({ station_list }: ChartsSideBarProps) {
     const { appendNode } = reactFlowStore((state: ReactFlowStore) => ({
         appendNode: state.appendNode
     }), shallow)
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredStations, setFilteredStations] = useState(station_list);
+    const [filteredStations, setFilteredStations] = useState<FetchStationJson[]>(station_list);
 
     useEffect(() => {
         const filtered = station_list.filter(station =>
@@ -29,11 +35,11 @@ export default function ChartsSideBar({ station_list }) {
         setFilteredStations(filtered);
     }, [searchTerm, station_list]);
 
-    const handleSearchChange = (event) => {
+    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleButtonClick = useCallback(async (event) => {
+    const handleButtonClick = useCallback(async (event: React.MouseEvent) => {
         const s_id = event.currentTarget.id
         const chart_resp = await fetchGraph(s_id)
         const plotly_json = JSON.parse(chart_resp.pjson)

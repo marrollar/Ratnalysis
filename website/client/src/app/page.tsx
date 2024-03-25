@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import { Suspense, useEffect, useState } from "react";
 import { useGraphSummary } from "./lib/client";
+import { PlotParams } from "react-plotly.js";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 const SkeletonLoader = () => (
@@ -30,7 +31,7 @@ const SkeletonLoader = () => (
 
 export default function Home() {
   const { data, error, isLoading } = useGraphSummary()
-  const [graph, setGraph] = useState(null)
+  const [graph, setGraph] = useState<PlotParams | null>(null)
 
   useEffect(() => {
     if (data && !error && !isLoading) {

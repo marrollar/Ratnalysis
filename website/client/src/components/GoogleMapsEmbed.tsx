@@ -3,8 +3,14 @@
 import React from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import CircleMarker from '@/app/geomap/CircleMarker';
+import { StationStats } from '@/app/geomap/page';
 
-export default function GoogleMapEmbed({ api_key, station_stats }) {
+interface GoogleMapEmbedsProps {
+    api_key: string | undefined,
+    station_stats: Record<string, StationStats>
+}
+
+export default function GoogleMapEmbed({ api_key, station_stats }: GoogleMapEmbedsProps) {
     const MANHATTAN_COORD = [
         40.7590322,
         -73.99

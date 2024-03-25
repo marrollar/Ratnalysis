@@ -1,3 +1,12 @@
+
+export interface FetchStationJson {
+    id: string,
+    name: string,
+    lines_served: string,
+    latitude: string,
+    longitude: string
+}
+
 export async function fetchStations() {
     try {
         const stations_resp = await fetch(`${process.env.ENDPOINT_ROOT}/rs/stations`, { method: "GET", cache: "no-store" }).then(x => x.json())
@@ -6,6 +15,14 @@ export async function fetchStations() {
         console.error("Error retrieving stations: ", error)
         return null
     }
+}
+
+export interface FetchLatestRecordJson {
+    id: string,
+    so_many: string,
+    one_or_two: string,
+    none: string,
+    date_end: string
 }
 
 export async function fetchLatestRecords() {

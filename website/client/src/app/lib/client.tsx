@@ -1,6 +1,6 @@
 import useSWR from "swr"
 
-async function fetcher(url) {
+async function fetcher(url:string) {
     try {
         const resp = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_ROOT}${url}`, { method: "GET", cache: "no-store" }).then(x => x.json())
         return resp

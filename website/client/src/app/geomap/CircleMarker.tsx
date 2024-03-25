@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
 import { Circle, InfoWindow } from '@react-google-maps/api';
+import { useState } from 'react';
 
-const CircleMarker = ({ center, radius, s_id, s_name, s_somany, s_oneortwo, s_none }) => {
+interface LatLngLit extends google.maps.LatLngLiteral { }
+interface MapMouseEvt extends google.maps.MapMouseEvent { }
+
+interface CircleMarker {
+    center: LatLngLit,
+    radius: number,
+    s_id: number,
+    s_name: string,
+    s_somany: number,
+    s_oneortwo: number,
+    s_none: number
+}
+
+const CircleMarker = ({ center, radius, s_id, s_name, s_somany, s_oneortwo, s_none }: CircleMarker) => {
     const [isMouseOver, setIsMouseOver] = useState(false);
     const [isTextBoxVisible, setIsTextBoxVisible] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ lat: null, lng: null });
+    const [mousePosition, setMousePosition] = useState<LatLngLit>({ lat: 0, lng: 0 });
     const [showMoreDetails, setShowMoreDetails] = useState(false);
 
     const handleMouseOver = () => {
@@ -14,7 +27,7 @@ const CircleMarker = ({ center, radius, s_id, s_name, s_somany, s_oneortwo, s_no
     const handleMouseOut = () => {
         setIsMouseOver(false);
         setIsTextBoxVisible(false);
-        setMousePosition({ lat: null, lng: null })
+        setMousePosition({ lat: 0, lng: 0 })
         setShowMoreDetails(false)
     };
 
@@ -22,15 +35,20 @@ const CircleMarker = ({ center, radius, s_id, s_name, s_somany, s_oneortwo, s_no
         setShowMoreDetails(true)
     };
 
-    const handleOnMouseMove = (e) => {
+    const handleOnMouseMove = (e: MapMouseEvt) => {
         const pixelOffset = -50;
         const offsetX = 0;
         const offsetY = -pixelOffset;
 
-        setMousePosition({
-            lat: e.latLng.lat() + offsetY / 111111,
-            lng: e.latLng.lng() + offsetX / (111111 * Math.cos((e.latLng.lat() * Math.PI) / 180))
-        })
+        const lat = (e.latLng)?.lat()
+        const lng = (e.latLng)?.lng()
+
+        if (lat !== undefined && lng !== undefined) {
+            setMousePosition({
+                lat: lat + offsetY / 111111,
+                lng: lng + offsetX / (111111 * Math.cos((lat * Math.PI) / 180))
+            })
+        }
     }
 
     const circleOptions = {

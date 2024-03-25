@@ -24,10 +24,10 @@ export interface ChartData {
 // TODO: Make the data array in appendNode more precisely typed
 export interface ReactFlowStore {
     nodes: Node[],
-    rfInstance: ReactFlowInstance,
+    rfInstance: ReactFlowInstance | null,
     viewport: { x: number, y: number, zoom: number },
     onNodesChange: (changes: NodeChange[]) => void,
-    setRFInstance: (rf: ReactFlowInstance) => void,
+    setRFInstance: (rf: ReactFlowInstance | null) => void,
     setVP: (vp: Viewport) => void,
     appendNode: (id: string, data: []) => void
     deleteNode: (id: string) => void
@@ -44,7 +44,7 @@ const reactFlowStore = createWithEqualityFn(
                     nodes: applyNodeChanges(changes, get().nodes),
                 });
             },
-            setRFInstance: (rf: ReactFlowInstance) => {
+            setRFInstance: (rf: ReactFlowInstance | null) => {
                 set({ rfInstance: rf })
             },
             setVP: (vp: Viewport) => {

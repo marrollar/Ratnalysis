@@ -1,12 +1,20 @@
-import { unstable_noStore } from 'next/cache';
-import { useEffect, useState, useMemo } from 'react';
-import { useLoadScript, GoogleMap, LoadScript } from '@react-google-maps/api';
 import GoogleMapEmbed from '@/components/GoogleMapsEmbed';
-import { fetchStations, fetchLatestRecords } from '../lib/server';
+import { FetchLatestRecordJson, FetchStationJson, fetchLatestRecords, fetchStations } from '../lib/server';
 
+export interface StationStats {
+    id: string,
+    name: string,
+    lines_served: string,
+    latitude: number,
+    longitude: number,
+    so_many: number,
+    one_or_two: number,
+    none: number,
+    last_updated: string
+}
 
-async function merge_station_records(stations_raw, records_dict) {
-    var stats = {}
+async function merge_station_records(stations_raw: [FetchStationJson], records_dict: Record<string, FetchLatestRecordJson>) {
+    var stats: Record<string, StationStats> = {}
 
     for (var i = 0; i < stations_raw.length; i++) {
         var id = stations_raw[i].id
@@ -19,7 +27,7 @@ async function merge_station_records(stations_raw, records_dict) {
         var one_or_two = records_dict[id].one_or_two
         var none = records_dict[id].none
         var date = records_dict[id].date_end
-
+        // TODO: Flatten this dictionary to just an array
         stats[id] = {
             id: id,
             name: name,
@@ -37,17 +45,17 @@ async function merge_station_records(stations_raw, records_dict) {
 }
 
 export default async function GoogleMapComponent() {
-    const map_api_key = process.env.GOOGLE_MAPS_API_KEY
+    const map_api_key: string | undefined = process.env.GOOGLE_MAPS_API_KEY
 
     const stations_resp = await fetchStations()
     const records_resp = await fetchLatestRecords()
 
-    var records = {}
+    var records: Record<string, FetchLatestRecordJson> = {}
     for (var i = 0; i < records_resp.records.length; i++) {
         records[records_resp.records[i].id] = records_resp.records[i]
     }
 
-    const station_stats = await merge_station_records(stations_resp.stations, records)
+    const station_stats: Record<string, StationStats> = await merge_station_records(stations_resp.stations, records)
 
     return (
         <GoogleMapEmbed
