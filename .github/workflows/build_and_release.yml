@@ -1,0 +1,21 @@
+name: build-and-release
+run-name: Rebuilding via docker
+on: workflow_dispatch
+jobs:
+  build_client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build the stack
+        working-directory: ./website/client
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: client standalone
+          path: ./website/client/.next/standalone
