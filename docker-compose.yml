@@ -26,8 +26,8 @@ services:
     container_name: rat_client
     ports:
       - "3000:3000"
-    working_dir: /client
-    command: npm run start
+    # working_dir: /client
+    # command: npm run start
     networks:
       - ratnet
 
