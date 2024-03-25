@@ -1,5 +1,5 @@
 name: build-and-release
-run-name: Rebuilding via docker
+run-name: Build client and server
 on: workflow_dispatch
 jobs:
   build_client:
@@ -8,14 +8,66 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build the stack
+      - name: Build the client
         working-directory: ./website/client
         run: |
           npm install
           npm run build
 
-      - name: Upload build artifacts
+      - name: Upload client artifacts
         uses: actions/upload-artifact@v4
         with:
           name: client standalone
           path: ./website/client/.next/standalone
+
+      - name: Archive client artifacts
+        run: |
+          zip -r client_standalone.zip ./website/client/.next/standalone
+
+      - name: Release client
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            client_standalone.zip
+          tag_name: v1.0.0
+          name: Release v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.22.1'
+
+      - name: Compile server
+        working-directory: ./website/server
+        run: |
+          go mod download
+          CGO_ENABLED=0 GOOS=linux go build -o ratapi
+
+      - name: Archive server artifacts and dependencies
+        run: |
+          mv ./website/server/ratapi ./pydata
+          zip -r server.zip ./pydata
+
+      - name: Upload server artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: server
+          path: ./pydata
+
+      - name: Release server
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            server.zip
+          tag_name: v1.0.0
+          name: Release v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
