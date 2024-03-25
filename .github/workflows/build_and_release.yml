@@ -1,6 +1,10 @@
 name: build-and-release
 run-name: Build client and server
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - master
 permissions: # https://github.com/softprops/action-gh-release/issues/236
   contents: write
 
