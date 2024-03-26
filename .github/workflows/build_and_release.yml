@@ -21,6 +21,9 @@ jobs:
           npm install
           npm run build
           mv .next/static .next/standalone/.next
+        env:
+          NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
+          GOOGLE_MAPS_API_KEY:  ${{ secrets.GOOGLE_MAPS_API_KEY }}
 
       - name: Upload client artifacts
         uses: actions/upload-artifact@v4
