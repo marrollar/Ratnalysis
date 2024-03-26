@@ -11,19 +11,20 @@ permissions: # https://github.com/softprops/action-gh-release/issues/236
 jobs:
   build_client:
     runs-on: ubuntu-latest
+    environment: client
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Build the client
         working-directory: ./website/client
+        env:
+          NEXT_PUBLIC_ENDPOINT_ROOT: ${{ secrets.NEXT_PUBLIC_ENDPOINT_ROOT }}
+          GOOGLE_MAPS_API_KEY:  ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           npm install
           npm run build
           mv .next/static .next/standalone/.next
-        env:
-          NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
-          GOOGLE_MAPS_API_KEY:  ${{ secrets.GOOGLE_MAPS_API_KEY }}
 
       - name: Upload client artifacts
         uses: actions/upload-artifact@v4
