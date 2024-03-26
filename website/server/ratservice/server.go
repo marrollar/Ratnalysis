@@ -36,7 +36,7 @@ func NewHttpServer(ctx context.Context, endpoints Endpoints) http.Handler {
 func commonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Origin", "http://129.80.154.53:3000")
 		w.Header().Add("Access-Control-Allow-Methods", "GET")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		next.ServeHTTP(w, r)
