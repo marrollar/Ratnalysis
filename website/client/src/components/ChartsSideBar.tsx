@@ -7,7 +7,7 @@ import { ButtonClickEvent } from 'plotly.js';
 
 async function fetchGraph(station_id: string) {
     try {
-        const graph_resp = await fetch(`http://127.0.0.1:8080/ps/graphs/${station_id}`, { method: "GET" }).then(x => x.json())
+        const graph_resp = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_ROOT}/ps/graphs/${station_id}`, { method: "GET" }).then(x => x.json())
         return graph_resp
     } catch (error) {
         console.error("Error retrieving graph: ", error)
