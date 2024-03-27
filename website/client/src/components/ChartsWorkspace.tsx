@@ -51,6 +51,7 @@ function ChartsWorkspaceFlow() {
                     nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
                     defaultViewport={viewport}
+                    attributionPosition='top-right'
                 >
                     <Controls />
                     <MiniMap />

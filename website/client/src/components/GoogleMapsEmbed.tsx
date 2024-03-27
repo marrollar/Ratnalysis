@@ -30,42 +30,45 @@ export default function GoogleMapEmbed({ api_key, station_stats }: GoogleMapEmbe
 
     return (
         <>
-            {/* <LoadScript
-                googleMapsApiKey={api_key}
-            >
-                <GoogleMap
-                    mapContainerStyle={mapStyles}
-                    zoom={14}
-                    options={mapOptions}
-                    center={{
-                        lat: MANHATTAN_COORD[0],
-                        lng: MANHATTAN_COORD[1]
-                    }}
+            <div className='w-full'>
+                <LoadScript
+                    googleMapsApiKey={(api_key) ? api_key : ""}
                 >
-                    {Object.values(station_stats).map((station, index) => (
-                        <CircleMarker
-                            key={index}
-                            center={{
-                                lat: station.latitude,
-                                lng: station.longitude,
-                            }}
-                            radius={station.so_many + station.one_or_two}
-                            s_id={station.id}
-                            s_name={station.name}
-                            s_somany={station.so_many}
-                            s_oneortwo={station.one_or_two}
-                            s_none={station.none}
-                        />
-                    ))}
-                </GoogleMap>
-            </LoadScript> */}
-            <iframe
+                    <GoogleMap
+                        mapContainerStyle={mapStyles}
+                        mapContainerClassName=''
+                        zoom={14}
+                        options={mapOptions}
+                        center={{
+                            lat: MANHATTAN_COORD[0],
+                            lng: MANHATTAN_COORD[1]
+                        }}
+                    >
+                        {Object.values(station_stats).map((station, index) => (
+                            <CircleMarker
+                                key={index}
+                                center={{
+                                    lat: station.latitude,
+                                    lng: station.longitude,
+                                }}
+                                radius={station.so_many + station.one_or_two}
+                                s_id={parseInt(station.id)}
+                                s_name={station.name}
+                                s_somany={station.so_many}
+                                s_oneortwo={station.one_or_two}
+                                s_none={station.none}
+                            />
+                        ))}
+                    </GoogleMap>
+                </LoadScript>
+            </div>
+            {/* <iframe
                 className='w-full'
                 title="Google Map"
                 loading="lazy"
                 allowFullScreen
                 src={`https://www.google.com/maps/embed/v1/place?key=${api_key}&q=Manhattan`}
-            />
+            /> */}
         </>
     )
 }
