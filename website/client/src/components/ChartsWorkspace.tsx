@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import ReactFlow, {
     Background,
@@ -29,6 +29,7 @@ function ChartsWorkspaceFlow() {
         setRFInstance: state.setRFInstance,
     }), shallow)
     const { setViewport } = useReactFlow();
+    const [nodeCount, setNodeCount] = useState(0)
 
     // Saves flow to session whenever viewport is changed
     useOnViewportChange({
@@ -42,6 +43,12 @@ function ChartsWorkspaceFlow() {
     useEffect(() => {
         setViewport(viewport)
     })
+
+    // useEffect(() => {
+    //     const loaded_nodes = nodes.filter((node) => node.data !== null)
+    //     setNodeCount(loaded_nodes.length)
+    //     console.log(nodes.length)
+    // }, [nodes])
 
     return (
         <div className="grow pt-4 pr-4 pb-4">

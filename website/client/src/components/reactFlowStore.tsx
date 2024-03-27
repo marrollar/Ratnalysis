@@ -7,6 +7,7 @@ import {
 } from 'reactflow';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { createWithEqualityFn } from 'zustand/traditional';
+import { produce } from 'immer';
 
 export interface ChartData {
     id: string,
@@ -29,9 +30,14 @@ export interface ReactFlowStore {
     onNodesChange: (changes: NodeChange[]) => void,
     setRFInstance: (rf: ReactFlowInstance | null) => void,
     setVP: (vp: Viewport) => void,
-    appendNode: (id: string, data: []) => void
+    appendNode: (id: string, data: []) => void,
+    appendSkeleton: (id: string) => void,
+    updateNode: (id: string, data: []) => void,
     deleteNode: (id: string) => void
 }
+
+const MAX_X_JITTER = 500
+const MAX_Y_JITTER = 300
 
 const reactFlowStore = createWithEqualityFn(
     persist<ReactFlowStore>(
@@ -61,10 +67,41 @@ const reactFlowStore = createWithEqualityFn(
                                 id: id,
                                 pjson: data
                             },
-                            position: { x: 100, y: 100 }
+                            position: {
+                                x: 100 + (Math.random() * MAX_X_JITTER),
+                                y: 100 + (Math.random() * MAX_Y_JITTER)
+                            }
                         }
                     ]
                 })
+            },
+            appendSkeleton: (id: string) => {
+                set({
+                    nodes: [
+                        ...get().nodes,
+                        {
+                            id: id,
+                            type: "ChartNode",
+                            data: null,
+                            position: {
+                                x: 100 + (Math.random() * MAX_X_JITTER),
+                                y: 100 + (Math.random() * MAX_Y_JITTER)
+                            }
+                        }
+                    ]
+                })
+            },
+            updateNode: (id: string, data: []) => {
+                set((state) =>
+                    produce(state, (draft) => {
+                        const itemToUpdate = draft.nodes.find((item) => item.id === id);
+                        if (itemToUpdate) {
+                            itemToUpdate.data = {
+                                id: id,
+                                pjson: data
+                            }
+                        }
+                    }))
             },
             deleteNode: (id: string) => {
                 set((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }))
