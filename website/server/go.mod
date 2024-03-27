@@ -6,6 +6,7 @@ require (
 	github.com/go-kit/kit v0.13.0
 	github.com/go-kit/log v0.2.1
 	github.com/gorilla/mux v1.8.1
+	github.com/rs/cors v1.10.1
 	modernc.org/sqlite v1.29.2
 )
 

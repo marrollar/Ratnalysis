@@ -20,6 +20,7 @@ jobs:
         working-directory: ./website/client
         env:
           NEXT_PUBLIC_ENDPOINT_ROOT: ${{ secrets.NEXT_PUBLIC_ENDPOINT_ROOT }}
+          NEXT_PUBLIC_ALT_ENDPOINT_ROOT: ${{ secrets.NEXT_PUBLIC_ALT_ENDPOINT_ROOT }}
           GOOGLE_MAPS_API_KEY:  ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           npm install
