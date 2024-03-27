@@ -8,10 +8,6 @@ services:
     container_name: rat_server
     ports:
       - "8080:8080"
-    environment:
-      - DB_FILE=/pydata/rat_data.db
-      - PY_DIR=/pydata
-      - PORT=8080
     working_dir: /app
     command: /app/ratapi
     networks:

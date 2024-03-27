@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"main/plotlyservice"
 	"main/ratservice"
+	"main/env"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,23 +21,14 @@ import (
 )
 
 func main() {
-	// DB_FILE, err := filepath.Abs("../../pydata/rat_data.db")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	os.Exit(-1)
-	// }
+	env.LoadVars()
 
-	// PY_DIR, err := filepath.Abs("../../pydata/")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	os.Exit(-1)
-	// }
+	if env.DB_FILE == "" || env.PY_DIR == "" || env.PORT == "" || env.ALLOWED_ORIGINS == "" {
+		fmt.Println("Environment variable(s) not found")
+		os.Exit(1)
+	}
 
-	DB_FILE := os.Getenv("DB_FILE")
-	PY_DIR := os.Getenv("PY_DIR")
-	PORT := os.Getenv("PORT")
-
-	var httpaddr = flag.String("http", ":"+PORT, "Golang server addr")
+	var httpaddr = flag.String("http", ":"+env.PORT, "Golang server addr")
 	var logger_ratservice log.Logger
 	var logger_plotlyservice log.Logger
 	{
@@ -66,7 +58,7 @@ func main() {
 	var db *sql.DB
 	{
 		var err error
-		db, err = sql.Open("sqlite", DB_FILE)
+		db, err = sql.Open("sqlite", env.DB_FILE)
 		if err != nil {
 			level.Error(logger_ratservice).Log("exit", err)
 			os.Exit(-1)
@@ -81,7 +73,7 @@ func main() {
 	{
 		repository := ratservice.NewRepo(db, logger_ratservice)
 		ratservice_srv = ratservice.NewService(repository, logger_ratservice)
-		plotlyservice_srv = plotlyservice.NewService(logger_plotlyservice, PY_DIR)
+		plotlyservice_srv = plotlyservice.NewService(logger_plotlyservice, env.PY_DIR)
 	}
 
 	errs := make(chan error)

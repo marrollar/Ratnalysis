@@ -2,7 +2,9 @@ package ratservice
 
 import (
 	"context"
+	"main/env"
 	"net/http"
+	"strings"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -32,7 +34,7 @@ func NewHttpServer(ctx context.Context, endpoints Endpoints) http.Handler {
 	))
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://129.80.154.53:3000", "http://localhost:3000"},
+		AllowedOrigins: strings.Split(env.ALLOWED_ORIGINS, ","),
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Origin", "Content-Type"},
 		Debug:          true,
