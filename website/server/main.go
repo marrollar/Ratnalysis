@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"main/env"
 	"main/plotlyservice"
 	"main/ratservice"
-	"main/env"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,12 +23,9 @@ import (
 func main() {
 	env.LoadVars()
 
-	if env.DB_FILE == "" || env.PY_DIR == "" || env.PORT == "" || env.ALLOWED_ORIGINS == "" {
-		fmt.Println("Environment variable(s) not found")
-		os.Exit(1)
-	}
+	var httpaddr = flag.String("http", ":"+env.HTTP_PORT, "Golang server addr")
+	var httpsaddr = flag.String("https", ":"+env.HTTPS_PORT, "Golang server addr")
 
-	var httpaddr = flag.String("http", ":"+env.PORT, "Golang server addr")
 	var logger_ratservice log.Logger
 	var logger_plotlyservice log.Logger
 	{
@@ -97,9 +94,19 @@ func main() {
 	mux.PathPrefix("/rs").Handler(ratservice.NewHttpServer(ratservice_ctx, ratservice_endpoints))
 	mux.PathPrefix("/ps").Handler(plotlyservice.NewHttpServer(plotlyservice_ctx, plotlyservice_endpoints))
 
+	https_srv := &http.Server{
+		Addr:    *httpsaddr,
+		Handler: mux,
+	}
+
 	go func() {
-		fmt.Println("Listening on port: ", *httpaddr)
+		fmt.Println("HTTP Listening on port: ", *httpaddr)
 		errs <- http.ListenAndServe(*httpaddr, mux)
+	}()
+
+	go func() {
+		fmt.Println("HTTPS Listening on port: ", *httpsaddr)
+		errs <- https_srv.ListenAndServeTLS(env.TLS_CERT_PATH, env.TLS_KEY_PATH)
 	}()
 
 	level.Error(logger_ratservice).Log("exit", <-errs)
