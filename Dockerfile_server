@@ -4,7 +4,11 @@ COPY ./website/server /server
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o /server/ratapi
 
-FROM python:3.9.13
+FROM python:3.9.13 as pydeps
+RUN python -m pip install --upgrade pip
+RUN pip install numpy matplotlib plotly pandas seaborn statsmodels scikit-learn scipy
+
+FROM pydeps as runner
 RUN mkdir /app
 COPY --from=build-env /server/ratapi /app
 
@@ -13,6 +17,7 @@ RUN mkdir /pydata
 COPY ./pydata/rat_data.db /pydata
 COPY ./pydata/graphs.py /pydata
 COPY ./website/server/.env /app/.env
+COPY ./website/server/*.key /app/
+COPY ./website/server/*.pem /app/
 
-RUN python -m pip install --upgrade pip
-RUN pip install numpy matplotlib plotly pandas seaborn statsmodels scikit-learn scipy
+
