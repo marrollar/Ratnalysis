@@ -17,6 +17,8 @@ import (
 	"github.com/gorilla/mux"
 	_ "modernc.org/sqlite"
 
+	"crypto/tls"
+	"crypto/x509"
 	"net/http"
 )
 
@@ -94,15 +96,41 @@ func main() {
 	mux.PathPrefix("/rs").Handler(ratservice.NewHttpServer(ratservice_ctx, ratservice_endpoints))
 	mux.PathPrefix("/ps").Handler(plotlyservice.NewHttpServer(plotlyservice_ctx, plotlyservice_endpoints))
 
-	https_srv := &http.Server{
-		Addr:    *httpsaddr,
-		Handler: mux,
-	}
-
 	go func() {
 		fmt.Println("HTTP Listening on port: ", *httpaddr)
 		errs <- http.ListenAndServe(*httpaddr, mux)
 	}()
+
+	serverCert, err := tls.LoadX509KeyPair(env.TLS_CERT_PATH, env.TLS_KEY_PATH)
+	if err != nil {
+		fmt.Println("Error loading certificate and private key:", err)
+		return
+	}
+
+	// Load Cloudflare's root certificate
+	cfCert, err := os.ReadFile(env.CLOUDFLARE_CERT_PATH)
+	if err != nil {
+		fmt.Println("Error loading Cloudflare root certificate:", err)
+		return
+	}
+
+	// Create a certificate pool and add Cloudflare's root certificate to it
+	rootCAs := x509.NewCertPool()
+	if !rootCAs.AppendCertsFromPEM(cfCert) {
+		fmt.Println("Failed to add Cloudflare root certificate to pool")
+		return
+	}
+
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{serverCert},
+		RootCAs:      rootCAs,
+	}
+
+	https_srv := &http.Server{
+		Addr:      *httpsaddr,
+		Handler:   mux,
+		TLSConfig: tlsConfig,
+	}
 
 	go func() {
 		fmt.Println("HTTPS Listening on port: ", *httpsaddr)

@@ -8,6 +8,7 @@ services:
     container_name: rat_server
     ports:
       - "8080:8080"
+      - "8443:8443"
     working_dir: /app
     command: /app/ratapi
     networks:
