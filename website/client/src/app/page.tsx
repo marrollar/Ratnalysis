@@ -1,11 +1,12 @@
-"use client"
-import dynamic from "next/dynamic";
-import { Suspense, useEffect, useState } from "react";
-import { useGraphSummary } from "./lib/client";
-import { PlotParams } from "react-plotly.js";
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
+import PlotWrapper from "@/components/PlotWrapper";
+import { ReactNode, Suspense } from "react";
+import { fetchSummary } from "./lib/server";
 
-const SkeletonLoader = () => (
+interface HomeStaticProps {
+  children?: ReactNode
+}
+
+const SkeletonLoader = async () => (
   // <div className="w-[800px] h-[400px] flex justify-center items-center bg-gray-700">
   //   <div className="animate-pulse bg-gray-600 relative "/>
   //   <div className="animate-pulse bg-gray-600 h-[95%] w-[95%]"></div>
@@ -29,25 +30,11 @@ const SkeletonLoader = () => (
   </div>
 );
 
-export default function Home() {
-  const { data, error, isLoading } = useGraphSummary()
-  const [graph, setGraph] = useState<PlotParams | null>(null)
-
-  useEffect(() => {
-    if (data && !error && !isLoading) {
-      try {
-        const parsed_data = JSON.parse(data.pjson)
-        setGraph(parsed_data)
-      } catch (error) {
-        console.error("Error parsing JSON data", error)
-      }
-    }
-  }, [data, error, isLoading])
-
+async function HomeStatic({ children }: HomeStaticProps) {
   return (
     <div className="parent flex justify-center items-center mx-auto">
       <div className="flex justify-center items-center bg-gray-900 p-2 rounded-md border border-gray-700">
-        <div className="flex justify-center items-center bg-gray-800 p-8 rounded-md">
+        <div className="flex justify-center items-center bg-gray-800 p-8 rounded-md min-h-[485px] min-w-[1320px]">
           <div className="md:w-1/2 md:pr-8">
             <h1 className="text-3xl font-bold mb-4">Ratnalysis</h1>
             <p className="text-lg mb-4">A visualization of data from <a
@@ -59,24 +46,33 @@ export default function Home() {
             </p>
           </div>
           <div className="flex md:w-1/2 md:pl-8">
-            <Suspense fallback={<SkeletonLoader />}>
-              {isLoading || !graph ? (
-                <SkeletonLoader />
-              ) : (
-                <Plot
-                  data={graph.data}
-                  layout={graph.layout}
-                  frames={graph.frames}
-                  config={graph.config}
-                  useResizeHandler={true}
-                  style={{ width: "800px", height: "400px" }}
-                />
-              )}
-            </Suspense>
-            {/* <SkeletonLoader></SkeletonLoader> */}
+            {children}
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+async function HomeLoaded() {
+  const summary_resp = await fetchSummary()
+  if (summary_resp === null) {
+    return <SkeletonLoader />
+  }
+
+  const graph = JSON.parse(summary_resp.pjson)
+
+  return (
+    <PlotWrapper graph={graph} />
+  )
+}
+
+export default async function Home() {
+  return (
+    <HomeStatic>
+      <Suspense fallback={<SkeletonLoader />}>
+        <HomeLoaded />
+      </Suspense>
+    </HomeStatic>
+  )
 }
