@@ -1,14 +1,15 @@
 "use client"
 
-import React from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import CircleMarker from '@/app/geomap/CircleMarker';
 import { StationStats } from '@/app/geomap/page';
+import { GoogleMap, Libraries, useJsApiLoader } from '@react-google-maps/api';
 
 interface GoogleMapEmbedsProps {
-    api_key: string | undefined,
+    api_key: string,
     station_stats: Record<string, StationStats>
 }
+
+const API_LIBRARIES: Libraries = ["drawing"]
 
 export default function GoogleMapEmbed({ api_key, station_stats }: GoogleMapEmbedsProps) {
     const MANHATTAN_COORD = [
@@ -28,12 +29,16 @@ export default function GoogleMapEmbed({ api_key, station_stats }: GoogleMapEmbe
         maxZoom: 20
     };
 
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: api_key,
+        libraries: API_LIBRARIES,
+    });
+
     return (
         <>
             <div className='w-full'>
-                <LoadScript
-                    googleMapsApiKey={(api_key) ? api_key : ""}
-                >
+                {isLoaded &&
                     <GoogleMap
                         mapContainerStyle={mapStyles}
                         mapContainerClassName=''
@@ -60,7 +65,7 @@ export default function GoogleMapEmbed({ api_key, station_stats }: GoogleMapEmbe
                             />
                         ))}
                     </GoogleMap>
-                </LoadScript>
+                }
             </div>
             {/* <iframe
                 className='w-full'

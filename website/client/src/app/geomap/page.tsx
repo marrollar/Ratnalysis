@@ -45,7 +45,7 @@ async function merge_station_records(stations_raw: [FetchStationJson], records_d
 }
 
 export default async function GoogleMapComponent() {
-    const map_api_key: string | undefined = process.env.GOOGLE_MAPS_API_KEY
+    const map_api_key: string = process.env.GOOGLE_MAPS_API_KEY ? process.env.GOOGLE_MAPS_API_KEY : ""
 
     const stations_resp = await fetchStations()
     const records_resp = await fetchLatestRecords()
