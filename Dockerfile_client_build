@@ -33,6 +33,8 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY ./website/client .
+RUN mv .env.production is.env.production.local && \
+    mv .env.production_remote .env.production
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -68,12 +70,8 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-USER nextjs
+RUN cd / && \
+    echo "/bin/cp -rf /app/. /build/client" >> entrypoint.sh && \
+    echo "mv /build/client/.env.production /build/client/.env" >> entrypoint.sh
 
-EXPOSE 3000
-
-ENV PORT 3000
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD HOSTNAME="0.0.0.0" node server.js
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]

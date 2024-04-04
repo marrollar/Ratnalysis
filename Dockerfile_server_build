@@ -1,0 +1,23 @@
+FROM golang:1.22.1 as build-env
+WORKDIR /server
+COPY ./website/server /server
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -o /server/ratapi
+
+FROM alpine:latest as mover
+WORKDIR /build_tmp
+COPY --from=build-env /server/ratapi .
+
+# TODO have the dockerfile also create the database instead of copying it over
+COPY ./pydata /pydata
+COPY ./website/server /server
+RUN cd / && \
+    echo "/bin/cp -f /build_tmp/ratapi /build/server" >> entrypoint.sh && \
+    echo "/bin/cp -f /pydata/rat_data.db /build/server" >> entrypoint.sh && \
+    echo "/bin/cp -f /pydata/graphs.py /build/server" >> entrypoint.sh && \
+    echo "/bin/cp -f /server/.env.production /build/server/.env" >> entrypoint.sh && \
+    echo "/bin/cp -f /server/*.key /build/server" >> entrypoint.sh && \
+    echo "/bin/cp -f /server/*.pem /build/server" >> entrypoint.sh
+
+
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]

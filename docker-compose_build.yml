@@ -1,0 +1,20 @@
+services:
+  server:
+    image: ratapi_deploy:latest
+    build:
+      dockerfile: ./Dockerfile_server_build
+    container_name: rat_server_build
+    volumes:
+      - ./build/server:/build/server
+    command: sh -c "/entrypoint.sh"
+    tty: true
+
+  client:
+    image: ratapi_deploy:latest
+    build:
+      dockerfile: ./Dockerfile_client_build
+    container_name: rat_client_build
+    volumes:
+      - ./build/client:/build/client
+    command: sh -c "/entrypoint.sh"
+    tty: true
