@@ -5,9 +5,19 @@ import { shallow } from "zustand/shallow";
 import reactFlowStore, { ReactFlowStore } from "./reactFlowStore";
 import { ButtonClickEvent } from 'plotly.js';
 
+const fetch_opts: RequestInit = {
+    mode: "cors",
+    method: "GET",
+    cache: "no-store",
+    headers: {
+        "Content-Type": "application/json",
+        Origin: `${process.env.NEXT_PUBLIC_FRONT_URL}`
+    }
+}
 async function fetchGraph(station_id: string) {
     try {
-        const graph_resp = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_ROOT}/ps/graphs/${station_id}`, { method: "GET" }).then(x => x.json())
+        // const graph_resp = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_ROOT}/ps/graphs/${station_id}`, fetch_opts).then(x => x.json())
+        const graph_resp = await fetch(`${process.env.NEXT_PUBLIC_FRONT_URL}/ps/graphs/${station_id}`, fetch_opts).then(x => x.json())
         return graph_resp
     } catch (error) {
         console.error("Error retrieving graph: ", error)
