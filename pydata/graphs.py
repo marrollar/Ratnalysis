@@ -211,7 +211,7 @@ def plot_station_summary(station_name=None, station_id=None):
             overlaying="y",
             tickmode="sync",
         ),
-        margin={'t':100,'l':0,'b':0,'r':0}
+        margin={'t': 100, 'l': 0, 'b': 0, 'r': 0}
     )
 
     return pio.to_json(fig, pretty=True)
